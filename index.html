@@ -1,0 +1,2173 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Ruta Pura Vida del Testing · TMMi y TPI Next</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap"
+    />
+    <style>
+      :root {
+        --ink: #16301f;
+        --card: #fffef6;
+        --line: #d9e6c8;
+        --grn: #1f9d55;
+        --red: #d62839;
+        --sun: #ffc83d;
+        --blu: #1b3a8a;
+        --sky: linear-gradient(#78d0f4, #d8f3e2 62%, #58b97b);
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --ink: #f2f0dc;
+          --card: #16281d;
+          --line: #2c4a37;
+          --sky: linear-gradient(#0b2545, #14473a 62%, #0c2a1c);
+        }
+      }
+      :root[data-theme="dark"] {
+        --ink: #f2f0dc;
+        --card: #16281d;
+        --line: #2c4a37;
+        --sky: linear-gradient(#0b2545, #14473a 62%, #0c2a1c);
+      }
+      html {
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--sky) fixed;
+        color: var(--ink);
+        font:
+          16px/1.5 system-ui,
+          sans-serif;
+        overflow-x: hidden;
+      }
+      h1,
+      h2,
+      h3,
+      .big,
+      .nd b,
+      .tab {
+        font-family: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+      }
+      .sc {
+        position: fixed;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .sun {
+        top: 8px;
+        right: 14px;
+        font-size: 2.8rem;
+        animation: spin 40s linear infinite;
+      }
+      .cl {
+        left: 0;
+        font-size: 3rem;
+        opacity: 0.85;
+        animation: drift 45s linear infinite;
+      }
+      .bd {
+        left: 0;
+        top: 34%;
+        font-size: 2rem;
+        animation: fly 20s linear infinite;
+      }
+      .pm {
+        bottom: -6px;
+        font-size: 4.5rem;
+        transform-origin: 50% 100%;
+        animation: sway 4s ease-in-out infinite alternate;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes drift {
+        from {
+          transform: translateX(-15vw);
+        }
+        to {
+          transform: translateX(110vw);
+        }
+      }
+      @keyframes fly {
+        from {
+          transform: translate(-10vw, 0);
+        }
+        50% {
+          transform: translate(50vw, -50px);
+        }
+        to {
+          transform: translate(110vw, 0);
+        }
+      }
+      @keyframes sway {
+        from {
+          transform: rotate(-4deg);
+        }
+        to {
+          transform: rotate(4deg);
+        }
+      }
+      .wrap {
+        position: relative;
+        z-index: 1;
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 16px 14px 90px;
+      }
+      header {
+        text-align: center;
+      }
+      h1 {
+        margin: 6px 0 0;
+        font-size: clamp(1.7rem, 6vw, 2.5rem);
+        line-height: 1.1;
+        color: var(--blu);
+      }
+      @media (prefers-color-scheme: dark) {
+        h1 {
+          color: var(--sun);
+        }
+      }
+      .sub {
+        margin: 2px 0 8px;
+        opacity: 0.8;
+      }
+      .stats {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        background: var(--card);
+        border: 2px solid var(--line);
+        border-radius: 999px;
+        padding: 6px 14px;
+        margin: 8px 0 14px;
+      }
+      .pb,
+      .bar {
+        flex: 1;
+        height: 12px;
+        border-radius: 9px;
+        background: var(--line);
+        overflow: hidden;
+      }
+      .pb i,
+      .bar i {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--grn), var(--sun));
+        transition: width 0.6s;
+      }
+      #map {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+      .nd {
+        position: relative;
+        border: 3px solid var(--line);
+        border-radius: 22px;
+        background: var(--card);
+        color: var(--ink);
+        padding: 10px 4px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        transition: transform 0.2s;
+      }
+      .nd:hover {
+        transform: translateY(-3px);
+      }
+      .nd .em {
+        font-size: 2.2rem;
+        animation: bob 2.4s ease-in-out infinite;
+      }
+      .nd b {
+        font-size: 1.2rem;
+      }
+      .nd small {
+        font-size: 0.74rem;
+        line-height: 1.2;
+        text-align: center;
+      }
+      .nd.ok {
+        border-color: var(--grn);
+      }
+      .nd.ok::after {
+        content: "✅";
+        position: absolute;
+        top: -8px;
+        right: -6px;
+      }
+      .nd.now {
+        border-color: var(--sun);
+        animation: pulse 1.6s infinite;
+      }
+      .nd.lock {
+        filter: grayscale(1);
+        opacity: 0.6;
+      }
+      .shake {
+        animation: shake 0.4s;
+      }
+      @keyframes bob {
+        50% {
+          transform: translateY(-5px);
+        }
+      }
+      @keyframes pulse {
+        50% {
+          transform: scale(1.06);
+          box-shadow: 0 0 0 10px #ffc83d55;
+        }
+      }
+      @keyframes shake {
+        25% {
+          transform: translateX(-7px);
+        }
+        75% {
+          transform: translateX(7px);
+        }
+      }
+      #mod {
+        display: none;
+      }
+      .card {
+        background: var(--card);
+        border: 2px solid var(--line);
+        border-radius: 18px;
+        padding: 16px;
+        margin: 10px 0;
+        animation: fade 0.35s;
+      }
+      @keyframes fade {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+      }
+      .ex {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-left: 5px solid var(--sun);
+        background: var(--line);
+        border-radius: 10px;
+        font-size: 0.95rem;
+      }
+      .back {
+        background: none;
+        border: 0;
+        color: var(--ink);
+        font: inherit;
+        cursor: pointer;
+        padding: 6px 0;
+        text-decoration: underline;
+      }
+      h2 {
+        margin: 4px 0;
+        font-size: 1.7rem;
+      }
+      h3 {
+        font-size: 1.25rem;
+        margin: 10px 0;
+      }
+      .tabs {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .tab {
+        border: 2px solid var(--line);
+        background: var(--card);
+        color: var(--ink);
+        border-radius: 999px;
+        padding: 4px 14px;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+      .tab.on {
+        background: var(--grn);
+        color: #fff;
+        border-color: var(--grn);
+      }
+      .big {
+        display: block;
+        width: 100%;
+        margin-top: 12px;
+        padding: 10px;
+        border: 0;
+        border-radius: 16px;
+        background: var(--red);
+        color: #fff;
+        font-size: 1.2rem;
+        cursor: pointer;
+      }
+      .big:disabled {
+        background: #8a9a8f;
+        cursor: not-allowed;
+      }
+      .opt {
+        display: block;
+        width: 100%;
+        text-align: left;
+        margin: 8px 0;
+        padding: 11px 14px;
+        border: 2px solid var(--line);
+        border-radius: 14px;
+        background: var(--card);
+        color: var(--ink);
+        font: inherit;
+        cursor: pointer;
+        transition: transform 0.15s;
+      }
+      .opt:hover:enabled {
+        transform: scale(1.015);
+        border-color: var(--sun);
+      }
+      .opt.ok {
+        background: var(--grn);
+        color: #fff;
+        border-color: var(--grn);
+      }
+      .opt.bad {
+        background: var(--red);
+        color: #fff;
+        border-color: var(--red);
+        animation: shake 0.4s;
+      }
+      .msg {
+        font-weight: 700;
+        margin: 10px 0 0;
+      }
+      .res {
+        text-align: center;
+      }
+      .res .em {
+        font-size: 4rem;
+        display: block;
+        animation: bob 1.5s infinite;
+      }
+      .cf {
+        position: fixed;
+        top: -2rem;
+        z-index: 5;
+        pointer-events: none;
+        font-size: 1.6rem;
+        animation: fall linear forwards;
+      }
+      @keyframes fall {
+        to {
+          transform: translateY(110vh) rotate(360deg);
+        }
+      }
+      #toast {
+        position: fixed;
+        left: 50%;
+        bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+        transform: translate(-50%, 40px);
+        background: var(--ink);
+        color: var(--card);
+        padding: 10px 18px;
+        border-radius: 14px;
+        opacity: 0;
+        transition: 0.3s;
+        z-index: 9;
+        max-width: 90vw;
+        text-align: center;
+      }
+      #toast.on {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+      footer {
+        text-align: center;
+        margin-top: 18px;
+      }
+      .bf {
+        left: 0;
+        font-size: 1.5rem;
+        animation: wander 26s linear infinite;
+      }
+      .bus {
+        left: 0;
+        bottom: 2px;
+        font-size: 2.6rem;
+        animation: drive 30s linear infinite;
+      }
+      .lf {
+        top: 0;
+        font-size: 1.4rem;
+        animation: leaf 12s linear infinite;
+      }
+      @keyframes wander {
+        0% {
+          transform: translate(-10vw, 0);
+        }
+        25% {
+          transform: translate(25vw, -40px);
+        }
+        50% {
+          transform: translate(55vw, 30px);
+        }
+        75% {
+          transform: translate(85vw, -30px);
+        }
+        100% {
+          transform: translate(110vw, 10px);
+        }
+      }
+      @keyframes drive {
+        from {
+          transform: translateX(110vw);
+        }
+        to {
+          transform: translateX(-20vw);
+        }
+      }
+      @keyframes leaf {
+        from {
+          transform: translate(0, -10vh) rotate(0);
+        }
+        to {
+          transform: translate(30vw, 110vh) rotate(540deg);
+        }
+      }
+      h1 {
+        animation: flo2 3s ease-in-out infinite;
+      }
+      @keyframes flo2 {
+        50% {
+          transform: translateY(-5px) rotate(-1deg);
+        }
+      }
+      .nd {
+        animation: pop 0.5s backwards;
+        animation-delay: var(--d, 0s);
+      }
+      .nd.shake {
+        animation: shake 0.4s;
+      }
+      .nd.now::before {
+        content: "🦥";
+        position: absolute;
+        top: -22px;
+        left: 50%;
+        font-size: 1.7rem;
+        transform-origin: 50% 0;
+        animation: swing 2s ease-in-out infinite;
+      }
+      @keyframes swing {
+        0%,
+        100% {
+          transform: translateX(-50%) rotate(-14deg);
+        }
+        50% {
+          transform: translateX(-50%) rotate(14deg);
+        }
+      }
+      @keyframes pop {
+        from {
+          opacity: 0;
+          transform: scale(0.5);
+        }
+      }
+      @keyframes slide {
+        from {
+          opacity: 0;
+          transform: translateX(-24px);
+        }
+      }
+      .card.res {
+        animation: pop 0.5s;
+      }
+      .opt {
+        animation: slide 0.35s backwards;
+      }
+      .opt:nth-of-type(2) {
+        animation-delay: 0.08s;
+      }
+      .opt:nth-of-type(3) {
+        animation-delay: 0.16s;
+      }
+      .opt:nth-of-type(4) {
+        animation-delay: 0.24s;
+      }
+      .opt.bad {
+        animation: shake 0.4s;
+      }
+      .tz {
+        font-weight: 700;
+        margin: 2px 0 8px;
+      }
+      body {
+        background-size: 100% 170%;
+        animation: sky 26s ease-in-out infinite alternate;
+      }
+      @keyframes sky {
+        to {
+          background-position: 0 100%;
+        }
+      }
+      .wv {
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 70px;
+        background: radial-gradient(
+            circle at 30px 0,
+            transparent 29px,
+            #2fa36b 30px
+          )
+          repeat-x;
+        background-size: 60px 70px;
+        opacity: 0.55;
+        animation: wvx 14s linear infinite;
+      }
+      .w2 {
+        height: 50px;
+        background: radial-gradient(
+            circle at 20px 0,
+            transparent 19px,
+            #1f7a4d 20px
+          )
+          repeat-x;
+        background-size: 40px 50px;
+        opacity: 0.5;
+        animation-duration: 9s;
+        animation-direction: reverse;
+      }
+      @keyframes wvx {
+        to {
+          background-position-x: -600px;
+        }
+      }
+      .bl {
+        left: 75%;
+        bottom: -60px;
+        font-size: 2.4rem;
+        animation: rise 28s linear infinite;
+      }
+      @keyframes rise {
+        to {
+          transform: translate(-30vw, -115vh);
+        }
+      }
+      .mk {
+        top: -6px;
+        left: 8%;
+        font-size: 2.4rem;
+        transform-origin: 50% -40px;
+        animation: sw2 3s ease-in-out infinite;
+      }
+      .mk::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: -40px;
+        height: 40px;
+        width: 3px;
+        background: #2e7d32;
+      }
+      @keyframes sw2 {
+        0%,
+        100% {
+          transform: rotate(-18deg);
+        }
+        50% {
+          transform: rotate(18deg);
+        }
+      }
+      .ff {
+        font-size: 1.2rem;
+        animation:
+          tw 2.4s ease-in-out infinite,
+          drf 9s ease-in-out infinite alternate;
+      }
+      @keyframes drf {
+        to {
+          translate: 45px -35px;
+        }
+      }
+      @keyframes tw {
+        50% {
+          transform: scale(1.5) rotate(20deg);
+          opacity: 0.5;
+        }
+      }
+      .tk {
+        overflow: hidden;
+        white-space: nowrap;
+        margin: 2px 0 6px;
+        font-size: 1.5rem;
+      }
+      .tr {
+        display: inline-block;
+        animation: mq 30s linear infinite;
+      }
+      @keyframes mq {
+        to {
+          transform: translateX(-50%);
+        }
+      }
+      .wd {
+        display: inline-block;
+        white-space: nowrap;
+      }
+      h1 .wd span {
+        display: inline-block;
+        animation: wv2 2.2s ease-in-out infinite;
+      }
+      @keyframes wv2 {
+        50% {
+          transform: translateY(-7px);
+        }
+      }
+      .nd.ok {
+        animation:
+          pop 0.5s backwards var(--d, 0s),
+          wob 4s ease-in-out infinite;
+      }
+      @keyframes wob {
+        50% {
+          transform: translateY(-4px) rotate(1.2deg);
+        }
+      }
+      .nd.lock .em {
+        animation: jig 3s infinite;
+      }
+      @keyframes jig {
+        0%,
+        85%,
+        100% {
+          transform: rotate(0);
+        }
+        90% {
+          transform: rotate(-16deg);
+        }
+        95% {
+          transform: rotate(16deg);
+        }
+      }
+      .nd.now::after {
+        content: "✨";
+        position: absolute;
+        right: -6px;
+        top: -10px;
+        font-size: 1.4rem;
+        animation: tw 1.2s infinite;
+      }
+      .stats > span:first-child {
+        display: inline-block;
+        animation: bob 1.8s infinite;
+      }
+      #toast {
+        bottom: auto;
+        top: calc(12px + env(safe-area-inset-top, 0px));
+        transform: translate(-50%, -40px);
+      }
+      #toast.on {
+        transform: translate(-50%, 0);
+      }
+      #shop {
+        display: none;
+        align-items: center;
+        gap: 10px;
+        background: var(--card);
+        border: 2px solid var(--sun);
+        border-radius: 18px;
+        padding: 8px 12px;
+        margin: 0 0 14px;
+        animation: pop 0.5s;
+      }
+      #shop > div {
+        flex: 1;
+        line-height: 1.25;
+      }
+      .jc {
+        font-size: 2.2rem;
+        animation: bob 2s infinite;
+      }
+      .buy {
+        border: 0;
+        border-radius: 14px;
+        background: var(--grn);
+        color: #fff;
+        font-family: "Baloo 2", system-ui, sans-serif;
+        font-weight: 800;
+        font-size: 1rem;
+        padding: 8px 12px;
+        cursor: pointer;
+        animation: bob 1.6s infinite;
+      }
+      .buy.off {
+        background: #8a9a8f;
+        animation: none;
+      }
+      .jw {
+        margin: 4px 0;
+      }
+      .jk {
+        border: 2px dashed var(--sun);
+        background: var(--card);
+        color: var(--ink);
+        border-radius: 12px;
+        padding: 5px 12px;
+        font: inherit;
+        cursor: pointer;
+      }
+      .jk:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .opt.gone {
+        opacity: 0.25;
+        text-decoration: line-through;
+        transform: scale(0.96);
+        animation: none;
+      }
+      #ay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        background: #0009;
+        align-items: center;
+        justify-content: center;
+        padding: 14px;
+      }
+      .ab {
+        background: var(--card);
+        color: var(--ink);
+        border: 3px solid var(--sun);
+        border-radius: 22px;
+        max-width: 520px;
+        width: 100%;
+        max-height: 88vh;
+        overflow: auto;
+        padding: 16px 18px;
+        animation: pop 0.45s;
+      }
+      .ab h2 {
+        margin: 0 0 8px;
+        font-size: 1.5rem;
+      }
+      .ab h4 {
+        margin: 12px 0 2px;
+        font-family: "Baloo 2", system-ui, sans-serif;
+        font-size: 1.1rem;
+      }
+      .ab p,
+      .ab li {
+        margin: 2px 0;
+        font-size: 0.95rem;
+      }
+      .ab ul {
+        margin: 2px 0;
+        padding-left: 20px;
+      }
+      .ax {
+        position: sticky;
+        top: 0;
+        float: right;
+        margin: 0 0 0 8px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 2px solid var(--line);
+        background: var(--card);
+        color: var(--ink);
+        font-size: 1.1rem;
+        cursor: pointer;
+        z-index: 1;
+      }
+      .ax:hover {
+        background: var(--red);
+        color: #fff;
+      }
+      #tb {
+        height: 8px;
+        border-radius: 6px;
+        background: var(--line);
+        overflow: hidden;
+        margin: 8px 0;
+      }
+      #tb i {
+        display: block;
+        height: 100%;
+        animation: tm 25s linear forwards;
+      }
+      @keyframes tm {
+        0% {
+          width: 100%;
+          background: var(--grn);
+        }
+        60% {
+          width: 40%;
+          background: var(--sun);
+        }
+        100% {
+          width: 0;
+          background: var(--red);
+        }
+      }
+      .card.q {
+        animation: pop 0.45s;
+      }
+      .card.q h3 {
+        animation: slide 0.4s;
+      }
+      .opt::before {
+        display: inline-block;
+        width: 1.8em;
+        height: 1.8em;
+        line-height: 1.8em;
+        text-align: center;
+        border-radius: 50%;
+        background: var(--sun);
+        color: #16301f;
+        font-weight: 800;
+        margin-right: 10px;
+        transition: transform 0.25s;
+      }
+      .opt:nth-of-type(1)::before {
+        content: "A";
+      }
+      .opt:nth-of-type(2)::before {
+        content: "B";
+      }
+      .opt:nth-of-type(3)::before {
+        content: "C";
+      }
+      .opt:nth-of-type(4)::before {
+        content: "D";
+      }
+      .opt:hover:enabled::before {
+        transform: rotate(360deg) scale(1.15);
+      }
+      .opt.ok {
+        animation: okp 0.6s;
+      }
+      @keyframes okp {
+        40% {
+          transform: scale(1.05) rotate(-1deg);
+        }
+      }
+      .dots {
+        display: flex;
+        gap: 7px;
+        justify-content: center;
+        margin: 4px 0;
+      }
+      .dots b {
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: var(--line);
+        transition: 0.3s;
+      }
+      .dots b.g {
+        background: var(--grn);
+        transform: scale(1.35);
+      }
+      .dots b.r {
+        background: var(--red);
+      }
+      .sb {
+        margin-top: 6px;
+        padding: 4px 10px;
+        border-radius: 12px;
+        background: var(--line);
+        display: inline-block;
+        animation: pop 0.4s 0.3s backwards;
+        font-style: italic;
+      }
+
+      @keyframes rage {
+        0%,
+        55% {
+          filter: none;
+        }
+        100% {
+          filter: drop-shadow(0 0 10px var(--red)) saturate(2.5);
+        }
+      }
+      #mp {
+        display: none;
+        position: fixed;
+        left: 50%;
+        bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+        transform: translateX(-50%);
+        z-index: 8;
+        border: 3px solid #fff;
+        background: var(--red);
+        color: #fff;
+        border-radius: 999px;
+        padding: 10px 26px;
+        font-family: "Baloo 2", system-ui, sans-serif;
+        font-weight: 800;
+        font-size: 1.15rem;
+        white-space: nowrap;
+        cursor: pointer;
+        box-shadow: 0 6px 18px #0006;
+        animation: mpp 1.8s ease-in-out infinite;
+      }
+      #mp:hover {
+        background: var(--blu);
+      }
+      @keyframes mpp {
+        50% {
+          transform: translateX(-50%) scale(1.07);
+          box-shadow: 0 6px 24px #ffc83dcc;
+        }
+      }
+      .hud {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.4rem;
+        margin: 6px 0;
+      }
+      .hud i {
+        font-style: normal;
+        display: inline-block;
+        animation: bob 2s infinite;
+      }
+      .hud i.off {
+        filter: grayscale(1);
+        opacity: 0.25;
+        animation: none;
+      }
+      .cb {
+        font-family: "Baloo 2", system-ui, sans-serif;
+        font-weight: 800;
+        color: var(--red);
+        animation: pulse2 0.6s infinite alternate;
+      }
+      @keyframes pulse2 {
+        to {
+          transform: scale(1.25);
+        }
+      }
+      .fo {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        background: var(--card);
+        border: 2px solid var(--line);
+        border-radius: 16px;
+        padding: 8px 12px;
+        margin: 6px 0;
+      }
+      .fo > div {
+        flex: 1;
+        font-size: 0.9rem;
+      }
+      .fe {
+        font-size: 3.2rem;
+        display: inline-block;
+        animation: bob 1.6s infinite;
+      }
+      .fe.hurt {
+        animation: hurt 0.5s;
+      }
+      .fe.atk {
+        animation: atk 0.5s;
+      }
+      @keyframes hurt {
+        25% {
+          transform: translateX(14px) rotate(12deg);
+          filter: brightness(2.2);
+        }
+        75% {
+          transform: translateX(-14px) rotate(-12deg);
+        }
+      }
+      @keyframes atk {
+        40% {
+          transform: scale(1.6) translateY(20px);
+        }
+      }
+      .hp {
+        margin-top: 4px;
+      }
+      .hp i {
+        background: linear-gradient(90deg, #ff7a45, var(--red));
+      }
+      .fl {
+        position: fixed;
+        z-index: 9;
+        font-weight: 800;
+        font-size: 1.3rem;
+        pointer-events: none;
+        animation: flo 1s forwards;
+      }
+      @keyframes flo {
+        to {
+          transform: translateY(-60px);
+          opacity: 0;
+        }
+      }
+      .quake {
+        animation: quake 0.4s;
+      }
+      @keyframes quake {
+        25% {
+          transform: translate(-7px, 3px);
+        }
+        75% {
+          transform: translate(7px, -3px);
+        }
+      }
+      #arena {
+        position: relative;
+        height: 230px;
+        margin: 10px 0;
+        border-radius: 14px;
+        overflow: hidden;
+        background: repeating-linear-gradient(
+          45deg,
+          var(--line),
+          var(--line) 12px,
+          transparent 12px,
+          transparent 24px
+        );
+      }
+      .bug {
+        position: absolute;
+        font-size: 2.2rem;
+        background: none;
+        border: 0;
+        cursor: crosshair;
+        animation: crawl 1s ease-in-out infinite alternate;
+      }
+      @keyframes crawl {
+        from {
+          transform: translate(0, 0) rotate(-20deg);
+        }
+        to {
+          transform: translate(40px, 25px) rotate(20deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sc sun">☀️</div>
+    <div class="sc cl" style="top: 9%">☁️</div>
+    <div
+      class="sc cl"
+      style="top: 20%; animation-delay: -22s; font-size: 2.2rem"
+    >
+      ☁️
+    </div>
+    <div class="sc bd">🦜</div>
+    <div class="sc wv w1"></div>
+    <div class="sc wv w2"></div>
+    <div class="sc bl">🎈</div>
+    <div class="sc mk">🐒</div>
+    <div class="sc ff" style="left: 12%; top: 42%">✨</div>
+    <div class="sc ff" style="left: 38%; top: 62%; animation-delay: -1s">
+      ✨
+    </div>
+    <div class="sc ff" style="left: 63%; top: 48%; animation-delay: -2s">
+      ✨
+    </div>
+    <div class="sc ff" style="left: 86%; top: 70%; animation-delay: -0.5s">
+      ✨
+    </div>
+    <div
+      class="sc cl"
+      style="
+        top: 30%;
+        font-size: 4rem;
+        opacity: 0.55;
+        animation-duration: 75s;
+        animation-delay: -30s;
+      "
+    >
+      ☁️
+    </div>
+    <div
+      class="sc bd"
+      style="
+        top: 15%;
+        font-size: 1.4rem;
+        animation-duration: 32s;
+        animation-delay: -12s;
+      "
+    >
+      🕊️
+    </div>
+    <div class="sc bf" style="top: 55%">🦋</div>
+    <div class="sc bf" style="top: 68%; animation-delay: -9s">🦋</div>
+    <div class="sc lf" style="left: 20%">🍃</div>
+    <div class="sc lf" style="left: 70%; animation-delay: -6s">🍃</div>
+    <div class="sc bus">🚌</div>
+    <div class="sc pm" style="left: -8px">🌴</div>
+    <div class="sc pm" style="right: -8px; animation-delay: -2s">🌴</div>
+    <div class="wrap">
+      <header>
+        <h1>Ruta Pura Vida del Testing</h1>
+        <p class="sub">
+          Sala 4 · Modelos de madurez y mejora del proceso: TMMi y TPI Next
+        </p>
+        <div class="tk" style="display: none"><div class="tr"></div></div>
+      </header>
+      <div class="stats">
+        <span>☕ <b id="pts">0</b></span>
+        <div class="pb"><i id="prog"></i></div>
+        <span id="cnt"></span>
+      </div>
+      <div id="shop"></div>
+      <main id="map"></main>
+      <section id="mod"></section>
+      <footer>
+        <button class="back" onclick="reset()">Reiniciar aventura</button> ·
+        <button class="back" onclick="ayuda(1)">❓ Cómo se juega</button>
+      </footer>
+    </div>
+    <div id="ay" onclick="if (event.target === this) ayuda(0);">
+      <div class="ab" role="dialog" aria-modal="true" aria-labelledby="at">
+        <button class="ax" onclick="ayuda(0)" aria-label="Cerrar">✕</button>
+        <h2 id="at">🌴 ¡Pura vida! Así se juega</h2>
+        <p>
+          Recorré la Ruta Pura Vida y aprendé sobre TMMi y TPI Next. Son 9
+          módulos y se hacen en orden: no se abre el siguiente hasta superar el
+          anterior.
+        </p>
+        <h4>📖 En cada módulo</h4>
+        <ul>
+          <li>
+            <b>Teoría:</b> abrí las pestañas, cada una trae un ejemplo. Hay que
+            verlas todas para jugar.
+          </li>
+          <li>
+            <b>Cacería de bichos:</b> 8 segundos para aplastar bichos. Cada 4 te
+            dan una rana extra (se puede saltar).
+          </li>
+          <li>
+            <b>Batalla:</b> cada respuesta correcta golpea al enemigo. Con 4
+            aciertos lo derrotás (7 en el jefe final).
+          </li>
+        </ul>
+        <h4>🐸 Vidas</h4>
+        <ul>
+          <li>
+            Empezás con 3 ranas (máximo 5). Cada error te quita una; si se
+            acaban, repetís la batalla.
+          </li>
+          <li>3 aciertos seguidos te dan una rana más.</li>
+          <li>
+            No hay límite de tiempo por pregunta: el cronómetro solo mide cuánto
+            tardás en todo el módulo.
+          </li>
+        </ul>
+        <h4>☕ Cafecitos</h4>
+        <p>
+          Los ganás al superar un módulo por primera vez: 10 por cada acierto, 5
+          por cada acierto de tu mejor racha y 5 por cada rana que te quede.
+          Repetir un módulo ya superado no da cafecitos.
+        </p>
+        <h4>🃏 Tienda de comodines</h4>
+        <ul>
+          <li>
+            Está en el mapa, arriba. El comodín 50/50 cuesta <b>50 ☕</b> y
+            podés guardar hasta 3.
+          </li>
+          <li>
+            En una batalla tocá el botón 🃏 bajo la pregunta: quita 2 respuestas
+            incorrectas. Un comodín por pregunta.
+          </li>
+        </ul>
+        <h4>🗺️ El mapa</h4>
+        <p>
+          🔒 bloqueado, ✅ superado, y el perezoso 🦥 marca el módulo que sigue.
+          Dentro de un módulo, el botón rojo “Volver al mapa” te regresa. Tu
+          avance se guarda en este navegador.
+        </p>
+        <button class="big" onclick="ayuda(0)">¡A jugar!</button>
+      </div>
+    </div>
+    <div id="toast"></div>
+    <button
+      id="mp"
+      onclick="
+        clearInterval(W);
+        clearInterval(SP);
+        clearTimeout(QT);
+        home();
+      "
+    >
+      🗺️ Mapa
+    </button>
+    <script>
+      const $ = (s) => document.querySelector(s);
+      let done = 0,
+        pts = 0,
+        jk = 0,
+        cur = 0,
+        seen = new Set(),
+        qs = [],
+        qi = 0,
+        ok = 0;
+      try {
+        done = +localStorage.getItem("rpv_done") || 0;
+        pts = +localStorage.getItem("rpv_pts") || 0;
+        jk = +localStorage.getItem("rpv_jk") || 0;
+      } catch (e) {}
+      const save = () => {
+        try {
+          localStorage.setItem("rpv_done", done);
+          localStorage.setItem("rpv_pts", pts);
+          localStorage.setItem("rpv_jk", jk);
+        } catch (e) {}
+      };
+      const T = (e, n, t, tabs, q) => ({ e, n, t, tabs, q });
+      // Cada pregunta: [enunciado, correcta, mala1, mala2, mala3]
+      const M = [
+        T(
+          "☕",
+          "Finca de Café",
+          "¿Qué es madurez de procesos?",
+          [
+            [
+              "Madurez",
+              "La madurez mide qué tan definido, gestionado, medido y mejorado está un proceso. Un proceso inmaduro depende de héroes; uno maduro es predecible y repetible.",
+              "Dos sodas venden casado. En la de doña Ana el sabor cambia según quién cocine ese día: proceso inmaduro, depende de la persona. En la otra hay receta, porciones medidas y alguien prueba antes de servir: siempre sale igual de rico, proceso maduro. En pruebas es igual: si solo Pedro sabe probar el sistema, hay riesgo; si el procedimiento está escrito, cualquiera lo repite.",
+            ],
+            [
+              "Mejorar",
+              "Mejorar es un ciclo continuo: evaluar cómo estamos, definir metas, aplicar cambios y verificar resultados (por ejemplo PDCA o IDEAL).",
+              "Un equipo nota que muchos defectos llegan a producción. Planificar: decide escribir los casos de prueba antes de programar. Hacer: lo prueba en un solo proyecto. Verificar: ve que los defectos bajaron de 20 a 8 (cifras de ejemplo). Actuar: lo adopta en todos los proyectos. Y el ciclo vuelve a empezar con el siguiente problema.",
+            ],
+            [
+              "Modelos",
+              "Los modelos de referencia (CMMI, TMMi, TPI Next) dan un camino de mejora basado en buenas prácticas para compararte contra un estándar.",
+              "Es como la tabla de crecimiento que usan en el EBAIS con los bebés: no te dice qué hacer cada día, pero te muestra si vas por buen camino y qué falta. Un modelo de madurez hace lo mismo con tu proceso de pruebas: te dice en qué nivel estás y cuál es el siguiente paso.",
+            ],
+          ],
+          [
+            [
+              "¿Qué mide la madurez de un proceso?",
+              "Qué tan definido, gestionado y mejorado está",
+              "La cantidad de testers del equipo",
+              "El precio de las herramientas",
+              "La edad de la empresa",
+            ],
+            [
+              "Un proceso inmaduro suele depender de…",
+              "El esfuerzo heroico de personas",
+              "Métricas automáticas",
+              "Auditorías externas",
+              "Procesos optimizados",
+            ],
+            [
+              "PDCA significa…",
+              "Planificar, Hacer, Verificar, Actuar",
+              "Probar, Documentar, Cerrar, Archivar",
+              "Priorizar, Diseñar, Codificar, Aprobar",
+              "Planear, Depurar, Calcular, Analizar",
+            ],
+            [
+              "Mejorar procesos es…",
+              "Un ciclo continuo",
+              "Un proyecto de una sola vez",
+              "Algo que solo hacen los programadores",
+              "Cambiar de herramienta cada mes",
+            ],
+            [
+              "¿Para qué sirve un modelo de madurez?",
+              "Dar un camino de mejora basado en buenas prácticas",
+              "Reemplazar al equipo de pruebas",
+              "Eliminar la necesidad de probar",
+              "Generar código automático",
+            ],
+          ],
+        ),
+        T(
+          "🌋",
+          "Volcán Arenal",
+          "TMMi: ¿qué es?",
+          [
+            [
+              "Origen",
+              "TMMi (Test Maturity Model integration) es un modelo de madurez para el proceso de pruebas, mantenido por la TMMi Foundation. Parte de TMM y es compatible con CMMI.",
+              "CMMI mira cómo se desarrolla software en general. TMMi usa la misma idea, pero solo para el proceso de pruebas. Es como tener un reglamento general de tránsito y otro específico solo para motos.",
+            ],
+            [
+              "Estructura",
+              "Es un modelo escalonado (staged) con 5 niveles. Cada nivel tiene áreas de proceso con metas y prácticas.",
+              "Área de proceso del nivel 2: Planificación de pruebas. Meta: que exista un plan de pruebas aprobado. Práctica: elaborar el plan con alcance, riesgos, fechas y responsables. La meta es el qué; la práctica es el cómo.",
+            ],
+            [
+              "Regla de oro",
+              "Para alcanzar un nivel hay que cumplir sus áreas de proceso y las de los niveles anteriores. No se saltan niveles, como las gradas de un volcán.",
+              "Una empresa cumple todo el nivel 2 y casi todo el nivel 3, pero le falta un área del 3, por ejemplo el programa de capacitación en pruebas. Resultado: sigue en nivel 2. Es como en la escuela: no pasás a sexto grado si no aprobaste quinto, aunque hayas sacado buenas notas en varias materias.",
+            ],
+          ],
+          [
+            [
+              "TMMi significa…",
+              "Test Maturity Model integration",
+              "Total Metrics Model Index",
+              "Testing Method for Managed Integration",
+              "Team Maturity Management initiative",
+            ],
+            [
+              "¿Quién mantiene TMMi?",
+              "La TMMi Foundation",
+              "Sogeti",
+              "La ISO",
+              "Scrum Alliance",
+            ],
+            ["¿Cuántos niveles tiene TMMi?", "5", "3", "4", "16"],
+            [
+              "TMMi es un modelo…",
+              "Escalonado (staged)",
+              "Continuo",
+              "Aleatorio",
+              "Solo para equipos ágiles",
+            ],
+            [
+              "¿Se puede pasar del nivel 2 al 4 sin cumplir el 3?",
+              "No, los niveles se alcanzan en orden",
+              "Sí, si hay presupuesto",
+              "Sí, si hay certificado",
+              "Sí, si el equipo es grande",
+            ],
+          ],
+        ),
+        T(
+          "🏖️",
+          "Playa Tamarindo",
+          "TMMi niveles 1 y 2",
+          [
+            [
+              "Nivel 1 · Inicial",
+              "Pruebas caóticas y sin control, confundidas con depuración. No tiene áreas de proceso; todo depende de personas específicas.",
+              "El equipo programa hasta el jueves y esa noche alguien prueba lo que alcanza. No hay plan ni casos escritos, y los errores se arreglan sobre la marcha. Ojo con la diferencia: probar es encontrar el fallo; depurar es buscar su causa en el código y corregirla. Aquí se mezclan. Si la tester estrella se enferma, nadie sabe cómo probar.",
+            ],
+            [
+              "Nivel 2 · Gestionado",
+              "Las pruebas se planifican y gestionan en cada proyecto y se distinguen de la depuración.",
+              "Antes de cada proyecto el equipo escribe un plan: qué se prueba, quién lo hace y cuándo. La tester reporta un defecto (probar) y la desarrolladora lo corrige (depurar): ya no se mezclan. Pero cada proyecto sigue haciéndolo a su manera, y por eso todavía no es nivel 3.",
+            ],
+            [
+              "Áreas del nivel 2",
+              "Política y estrategia de pruebas, planificación, monitoreo y control, diseño y ejecución, y ambiente de pruebas.",
+              "Un banco: su política dice que todo sistema se prueba antes de salir (política y estrategia). Define fechas y responsables (planificación). Cada semana compara avance real contra plan (monitoreo y control). Escribe casos y los ejecuta (diseño y ejecución). Y tiene un servidor de pruebas separado del real (ambiente de pruebas).",
+            ],
+          ],
+          [
+            [
+              "El nivel 1 de TMMi se llama…",
+              "Inicial",
+              "Gestionado",
+              "Definido",
+              "Medido",
+            ],
+            [
+              "¿Cuántas áreas de proceso tiene el nivel 1?",
+              "Ninguna",
+              "Cinco",
+              "Tres",
+              "Dieciséis",
+            ],
+            [
+              "El nivel 2 se llama…",
+              "Gestionado",
+              "Optimización",
+              "Definido",
+              "Inicial",
+            ],
+            [
+              "¿Cuál es un área de proceso del nivel 2?",
+              "Planificación de pruebas",
+              "Prevención de defectos",
+              "Organización de pruebas",
+              "Medición de pruebas",
+            ],
+            [
+              "En el nivel 2 las pruebas se distinguen de…",
+              "La depuración",
+              "La planificación",
+              "El diseño",
+              "La ejecución",
+            ],
+          ],
+        ),
+        T(
+          "🐒",
+          "Manuel Antonio",
+          "TMMi niveles 3, 4 y 5",
+          [
+            [
+              "Nivel 3 · Definido",
+              "Las pruebas se estandarizan en toda la organización e integran al ciclo de vida. Áreas: organización de pruebas, capacitación, ciclo de vida e integración, pruebas no funcionales y revisiones entre pares.",
+              "Ahora todos los proyectos de la empresa siguen el mismo proceso estándar de pruebas, hay un equipo de pruebas con roles claros y se dan cursos al personal. Los testers revisan los requisitos antes de que se programe (integración al ciclo de vida), se prueba rendimiento y seguridad (no funcionales) y los compañeros se revisan documentos entre sí (revisión entre pares).",
+            ],
+            [
+              "Nivel 4 · Medido",
+              "Las pruebas se miden de forma cuantitativa. Áreas: medición de pruebas, evaluación de calidad del producto y revisiones avanzadas.",
+              "Ya no se dice “probamos bastante”. Se dice: “detectamos el 85% de los defectos antes de producción y cada ciclo de pruebas tarda 2 horas” (cifras de ejemplo). Con números se decide dónde mejorar y se comprueba si el cambio funcionó.",
+            ],
+            [
+              "Nivel 5 · Optimización",
+              "Mejora continua y prevención. Áreas: prevención de defectos, control de calidad y optimización del proceso de pruebas.",
+              "El equipo analiza los defectos del último año y descubre que muchos nacen de requisitos ambiguos. Cambia el proceso para aclarar los requisitos antes de programar (prevención de defectos) y esos errores dejan de aparecer. Además prueba una herramienta nueva y, si funciona, la adopta (optimización).",
+            ],
+          ],
+          [
+            [
+              "El nivel 3 se llama…",
+              "Definido",
+              "Medido",
+              "Gestionado",
+              "Inicial",
+            ],
+            [
+              "¿Cuál es un área del nivel 3?",
+              "Pruebas no funcionales",
+              "Prevención de defectos",
+              "Medición de pruebas",
+              "Planificación de pruebas",
+            ],
+            [
+              "El nivel 4 se enfoca en…",
+              "La medición cuantitativa",
+              "El caos",
+              "Las mejoras por proyecto",
+              "Solo la documentación",
+            ],
+            [
+              "La prevención de defectos pertenece al nivel…",
+              "5",
+              "2",
+              "3",
+              "4",
+            ],
+            [
+              "El nivel más alto de TMMi es…",
+              "Optimización",
+              "Medido",
+              "Definido",
+              "Gestionado",
+            ],
+          ],
+        ),
+        T(
+          "🐢",
+          "Tortuguero",
+          "Evaluación TMMi",
+          [
+            [
+              "Evaluación",
+              "Un assessment compara el proceso real con el modelo para conocer el nivel de madurez actual y las debilidades.",
+              "Es como una revisión médica: el doctor compara tus resultados con lo esperado y te dice cómo estás y qué mejorar. Un evaluador revisa documentos, entrevista al equipo y concluye: “Están en nivel 1 y les falta el área de planificación de pruebas”.",
+            ],
+            [
+              "Metas y prácticas",
+              "Cada área de proceso tiene metas específicas (qué lograr) y prácticas (cómo lograrlo), más metas genéricas comunes a todas las áreas.",
+              "Área: Planificación de pruebas. Meta específica: se establece un plan de pruebas. Práctica: definir el alcance, estimar el esfuerzo y asignar responsables. Meta genérica: que esa área se gestione y se mantenga en el tiempo, no que se haga bien una sola vez.",
+            ],
+            [
+              "Evaluadores",
+              "Las evaluaciones formales las hacen evaluadores acreditados. También hay evaluaciones informales para diagnosticar y planear la mejora.",
+              "Evaluación formal: un evaluador acreditado revisa la evidencia y emite un resultado oficial de nivel que la empresa puede mostrar a sus clientes. Evaluación informal: el propio equipo, con ayuda, hace un diagnóstico interno para saber por dónde empezar, sin resultado oficial.",
+            ],
+          ],
+          [
+            [
+              "Una evaluación sirve para…",
+              "Conocer el nivel de madurez actual y las debilidades",
+              "Escribir casos de prueba",
+              "Instalar herramientas",
+              "Contratar personal",
+            ],
+            [
+              "Las metas específicas indican…",
+              "Qué se debe lograr en un área de proceso",
+              "Quién paga el proyecto",
+              "Cuánto cuesta una prueba",
+              "Qué lenguaje usar",
+            ],
+            [
+              "Las prácticas describen…",
+              "Cómo lograr las metas",
+              "El logo de la empresa",
+              "El salario de los testers",
+              "El horario laboral",
+            ],
+            [
+              "Las evaluaciones formales las realizan…",
+              "Evaluadores acreditados",
+              "Cualquier cliente",
+              "Solo los desarrolladores",
+              "El gerente de ventas",
+            ],
+            [
+              "Para lograr un nivel, sus áreas de proceso deben…",
+              "Estar satisfechas",
+              "Estar solo mencionadas",
+              "Planearse para el otro año",
+              "Ignorarse si hay prisa",
+            ],
+          ],
+        ),
+        T(
+          "🌴",
+          "Puerto Viejo",
+          "TPI Next: ¿qué es?",
+          [
+            [
+              "Origen",
+              "TPI Next es un modelo de mejora del proceso de pruebas creado por Sogeti, sucesor de TPI y muy ligado a TMap.",
+              "Sogeti creó TMap, un método para probar software. TPI Next es la herramienta que dice cómo ir mejorando ese proceso de pruebas. Es como un entrenador personal: no cambia el deporte que practicás, te dice qué mejorar y en qué orden.",
+            ],
+            [
+              "16 áreas clave",
+              "Cubre 16 áreas clave, como compromiso de los interesados, estrategia de pruebas, gestión de defectos, métricas, diseño de casos, herramientas y ambiente de pruebas.",
+              "Un equipo revisa sus 16 áreas. En Gestión de defectos van bien: usan una herramienta y tienen un flujo claro. Pero en Herramientas de pruebas casi todo es manual y en Compromiso de los interesados el gerente nunca participa. Ya saben dónde enfocarse primero.",
+            ],
+            [
+              "4 niveles",
+              "Los niveles son Inicial, Controlado, Eficiente y Optimizado. Es un modelo continuo: cada área clave avanza a su propio ritmo.",
+              "Piense en el tablero de un carro: cada indicador marca algo distinto. Un equipo puede estar Eficiente en Diseño de casos de prueba, Controlado en Métricas e Inicial en Herramientas, todo a la vez. En TMMi, en cambio, la empresa tendría un solo nivel global.",
+            ],
+          ],
+          [
+            [
+              "TPI Next fue creado por…",
+              "Sogeti",
+              "La TMMi Foundation",
+              "La ISO",
+              "El IEEE",
+            ],
+            ["¿Cuántas áreas clave tiene TPI Next?", "16", "5", "12", "8"],
+            [
+              "Un modelo continuo significa que…",
+              "Cada área clave puede mejorar de forma independiente",
+              "Todos los niveles se logran a la vez",
+              "No tiene niveles",
+              "Solo se aplica un año",
+            ],
+            [
+              "Niveles de TPI Next:",
+              "Controlado, Eficiente y Optimizado",
+              "Gestionado, Definido y Medido",
+              "Básico, Medio y Avanzado",
+              "Bronce, Plata y Oro",
+            ],
+            [
+              "¿Cuál es un área clave de TPI Next?",
+              "Gestión de defectos",
+              "Nómina de la empresa",
+              "Marketing digital",
+              "Diseño gráfico",
+            ],
+          ],
+        ),
+        T(
+          "🏔️",
+          "Volcán Irazú",
+          "Checkpoints, matriz y clusters",
+          [
+            [
+              "Checkpoints",
+              "Cada nivel de cada área clave tiene checkpoints: requisitos concretos que hay que cumplir para alcanzar ese nivel.",
+              "Área: Gestión de defectos, nivel Controlado. Checkpoints posibles (ilustrativos): “los defectos se registran en una herramienta” y “cada defecto tiene prioridad y responsable”. Si se cumplen todos, el área alcanza ese nivel; si falta uno solo, todavía no.",
+            ],
+            [
+              "Matriz y clusters",
+              "La Test Maturity Matrix muestra el nivel de cada área clave. Los clusters agrupan checkpoints para ordenar los pasos de mejora.",
+              "En la matriz el equipo pinta cada área: Gestión de defectos en Eficiente, Métricas en Inicial. Los clusters le dicen qué mejorar primero: un primer cluster junta checkpoints básicos de varias áreas (registrar defectos, tener plan de pruebas) y solo después viene uno más avanzado. Así se evita mejorar en desorden.",
+            ],
+            [
+              "Guiado por negocio",
+              "La mejora se guía por objetivos de negocio (BDTI): se eligen las metas del negocio y luego se priorizan las áreas clave. También hay sugerencias de mejora.",
+              "Meta del negocio: salir a producción más rápido. Entonces se priorizan áreas como Herramientas de pruebas (automatizar) y Estimación y planificación. Si la meta fuera reducir las quejas de los clientes, se priorizarían Diseño de casos de prueba y Gestión de defectos. Mismo modelo, distinto camino según el negocio.",
+            ],
+          ],
+          [
+            [
+              "Los checkpoints son…",
+              "Requisitos para alcanzar un nivel en un área clave",
+              "Reuniones semanales",
+              "Herramientas de pago",
+              "Reportes de ventas",
+            ],
+            [
+              "La Test Maturity Matrix muestra…",
+              "El nivel de cada área clave",
+              "Los salarios del equipo",
+              "Solo las fechas de entrega",
+              "La lista de clientes",
+            ],
+            [
+              "Los clusters sirven para…",
+              "Agrupar checkpoints y ordenar los pasos de mejora",
+              "Guardar archivos",
+              "Organizar fiestas",
+              "Contar defectos",
+            ],
+            [
+              "BDTI es una mejora guiada por…",
+              "Los objetivos del negocio",
+              "La suerte",
+              "Las herramientas",
+              "El tamaño del equipo",
+            ],
+            [
+              "TPI Next además incluye…",
+              "Sugerencias de mejora",
+              "Una garantía de cero defectos",
+              "Código fuente listo",
+              "Licencias gratis",
+            ],
+          ],
+        ),
+        T(
+          "⛰️",
+          "Cerro Chirripó",
+          "TMMi vs TPI Next",
+          [
+            [
+              "Estructura",
+              "TMMi es escalonado: 5 niveles para la organización. TPI Next es continuo: 16 áreas que avanzan por separado.",
+              "TMMi es como el cinturón de karate: tenés uno solo (naranja, verde…) y no te lo dan si te falta una técnica. TPI Next es como las notas de varias materias: matemática 90, inglés 70, cada una avanza por aparte.",
+            ],
+            [
+              "Cuándo usar",
+              "TMMi se elige cuando se busca un nivel reconocible y una evaluación formal. TPI Next, cuando se buscan mejoras puntuales guiadas por el negocio.",
+              "Una empresa que quiere mostrar a clientes internacionales una prueba oficial de calidad elige TMMi y apunta al nivel 3 con evaluación formal. Una startup que quiere bajar los defectos en producción este trimestre usa TPI Next y mejora solo Diseño de casos y Gestión de defectos.",
+            ],
+            [
+              "Juntos",
+              "No son rivales: se pueden complementar, usando uno como referencia de nivel y el otro para detallar la mejora.",
+              "Una empresa se fija como meta llegar a TMMi nivel 3 y usa la matriz de TPI Next para ver, área por área, qué checkpoints le faltan y en qué orden mejorarlos. Un modelo da el destino; el otro, la ruta para llegar.",
+            ],
+          ],
+          [
+            [
+              "Escalonado se asocia con…",
+              "TMMi",
+              "TPI Next",
+              "Ambos",
+              "Ninguno",
+            ],
+            ["Continuo se asocia con…", "TPI Next", "TMMi", "Ambos", "Ninguno"],
+            [
+              "Para buscar un nivel formal y reconocible conviene…",
+              "TMMi",
+              "TPI Next",
+              "Ninguno",
+              "Un curso de cocina",
+            ],
+            [
+              "Para mejoras puntuales por área clave conviene…",
+              "TPI Next",
+              "TMMi",
+              "Ninguno",
+              "Solo CMMI",
+            ],
+            [
+              "Sobre usar los dos modelos…",
+              "Se pueden complementar",
+              "Son siempre incompatibles",
+              "Solo uno es válido",
+              "Ninguno sirve para pruebas",
+            ],
+          ],
+        ),
+        T(
+          "🏛️",
+          "Teatro Nacional",
+          "La cima: resumen y examen final",
+          [
+            [
+              "TMMi",
+              "5 niveles escalonados: Inicial, Gestionado, Definido, Medido y Optimización. Se evalúa por áreas de proceso y no se saltan niveles. Lo mantiene la TMMi Foundation y es compatible con CMMI.",
+              "Una empresa con pruebas planificadas en cada proyecto, pero sin un estándar común, está en nivel 2. Para llegar al 3 debe estandarizar el proceso, capacitar al personal y sumar revisiones entre pares y pruebas no funcionales.",
+            ],
+            [
+              "TPI Next",
+              "Creado por Sogeti. 16 áreas clave, 4 niveles (Inicial, Controlado, Eficiente, Optimizado), modelo continuo con checkpoints, clusters, matriz y sugerencias de mejora.",
+              "Un equipo está Eficiente en Diseño de casos pero Inicial en Herramientas. Con los checkpoints y clusters ve que su siguiente paso es registrar los defectos en una herramienta y automatizar las pruebas de regresión, porque su meta de negocio es entregar más rápido.",
+            ],
+            [
+              "Comparar",
+              "TMMi: escalonado, nivel global y reconocible. TPI Next: continuo, por área y guiado por el negocio. Se pueden complementar.",
+              "Pregunta clásica: ¿cuál uso? Si necesitás un nivel oficial para mostrar, TMMi. Si necesitás mejorar algo concreto ya, TPI Next. Si querés ambas cosas, usás TMMi como meta y TPI Next como detalle.",
+            ],
+            [
+              "Mejora",
+              "Madurez es qué tan definido, medido y mejorado está un proceso. Mejorar es un ciclo continuo: evaluar, priorizar, cambiar y verificar.",
+              "Caso completo: una empresa evalúa y descubre que está en nivel 1. Prioriza la planificación de pruebas, la aplica en un proyecto piloto, mide si bajaron los defectos y, si funcionó, la extiende a toda la empresa. Después repite el ciclo hacia el siguiente nivel.",
+            ],
+          ],
+          [
+            ["¿Cuántos niveles tiene TMMi?", "5", "4", "3", "16"],
+            ["¿Cuántas áreas clave tiene TPI Next?", "16", "5", "10", "3"],
+            [
+              "¿Qué modelo es escalonado?",
+              "TMMi",
+              "TPI Next",
+              "Kanban",
+              "PDCA",
+            ],
+            ["En TMMi, el nivel Medido es el nivel…", "4", "2", "3", "5"],
+            ["La prevención de defectos está en el nivel…", "5", "1", "2", "3"],
+            [
+              "¿Quién creó TPI Next?",
+              "Sogeti",
+              "La TMMi Foundation",
+              "Anthropic",
+              "El IEEE",
+            ],
+            [
+              "Los checkpoints de TPI Next son…",
+              "Requisitos para alcanzar un nivel",
+              "Tipos de defectos",
+              "Herramientas de automatización",
+              "Roles del equipo",
+            ],
+            [
+              "BDTI significa mejora guiada por…",
+              "El negocio",
+              "La suerte",
+              "El tamaño del equipo",
+              "La moda",
+            ],
+            [
+              "¿Cuántas áreas de proceso tiene el nivel 1 de TMMi?",
+              "Ninguna",
+              "Cinco",
+              "Tres",
+              "Diez",
+            ],
+            [
+              "Un proceso maduro se caracteriza por ser…",
+              "Predecible y repetible",
+              "Dependiente de héroes",
+              "Caótico",
+              "Secreto",
+            ],
+          ],
+        ),
+      ];
+      const F = [
+        "¡Pura vida, mae!",
+        "¡Qué chiva!",
+        "¡Tuanis!",
+        "¡Diay, qué crack!",
+        "¡Así se hace!",
+      ];
+      const sh = (a) =>
+        a
+          .map((x) => [Math.random(), x])
+          .sort((a, b) => a[0] - b[0])
+          .map((x) => x[1]);
+      const ORD = [0, 1, 2, 5, 4, 3, 6, 7, 8];
+      function toast(t) {
+        const e = $("#toast");
+        e.textContent = t;
+        e.classList.add("on");
+        clearTimeout(toast.t);
+        toast.t = setTimeout(() => e.classList.remove("on"), 2400);
+      }
+      function home() {
+        $("#mod").style.display = "none";
+        $("#mp").style.display = "none";
+        $("footer").style.display = "block";
+        $("#map").style.display = "grid";
+        $(".stats").style.display = "flex";
+        $("#pts").textContent = pts;
+        $("#prog").style.width = (done / M.length) * 100 + "%";
+        $("#cnt").textContent = done + "/" + M.length;
+        $("#shop").style.display = "flex";
+        $("#shop").innerHTML =
+          `<span class="jc">🃏</span><div><b>Comodín 50/50</b><br><small>Quita 2 respuestas incorrectas en una pregunta. Tenés <b>${jk}</b> (máx. 3)</small></div><button class="buy ${pts < JP ? "off" : ""}" onclick="buy()">Comprar · ${JP} ☕</button>`;
+        $("#map").innerHTML = M.map((m, i) => {
+          const s = i < done ? "ok" : i == done ? "now" : "lock";
+          return `<button class="nd ${s}" style="order:${ORD[i]};--d:${i * 70}ms" data-i="${i}"><span class="em">${s == "lock" ? "🔒" : m.e}</span><b>${i + 1}</b><small>${m.n}</small></button>`;
+        }).join("");
+        window.scrollTo(0, 0);
+      }
+      $("#map").onclick = (e) => {
+        const b = e.target.closest(".nd");
+        if (!b) return;
+        const i = +b.dataset.i;
+        if (i > done) {
+          b.classList.add("shake");
+          setTimeout(() => b.classList.remove("shake"), 450);
+          toast("¡Diay, mae! Primero terminá “" + M[done].n + "”");
+          return;
+        }
+        openMod(i);
+      };
+      function openMod(i) {
+        cur = i;
+        seen = new Set();
+        const m = M[i];
+        $("#map").style.display = "none";
+        $(".stats").style.display = "none";
+        $("footer").style.display = "none";
+        $("#shop").style.display = "none";
+        $("#mp").style.display = "block";
+        $("#mod").style.display = "block";
+        $("#mod").innerHTML =
+          `<button class="back" onclick="home()">← Volver al mapa</button><h2><span class="em">${m.e}</span> ${i + 1}. ${m.n}</h2><p class="sub">${m.t}</p><p class="tz">⚔️ Te espera: ${EN[i][0]} ${EN[i][1]}</p>
+<div class="tabs">${m.tabs.map((t, k) => `<button class="tab" onclick="tab(${k})">${t[0]}</button>`).join("")}</div><div id="tp" class="card"></div>
+<button id="go" class="big" disabled onclick="quiz()"></button>`;
+        tab(0);
+        window.scrollTo(0, 0);
+      }
+      function tab(k) {
+        const m = M[cur];
+        seen.add(k);
+        document
+          .querySelectorAll(".tab")
+          .forEach((b, j) => b.classList.toggle("on", j == k));
+        $("#tp").innerHTML =
+          `<p style="margin:0">${m.tabs[k][1]}</p>${m.tabs[k][2] ? `<div class="ex"><b>💡 Ejemplo</b><br>${m.tabs[k][2]}</div>` : ""}`;
+        $("#tp").style.animation = "none";
+        void $("#tp").offsetWidth;
+        $("#tp").style.animation = "";
+        const g = $("#go"),
+          all = seen.size == m.tabs.length;
+        g.disabled = !all;
+        g.textContent = all
+          ? "⚔️ ¡A la batalla! (" + m.q.length + " preguntas)"
+          : "Leé las " +
+            m.tabs.length +
+            " pestañas para jugar (" +
+            seen.size +
+            "/" +
+            m.tabs.length +
+            ")";
+      }
+      function quiz() {
+        qs = sh(M[cur].q).map((q) => ({ q: q[0], a: q[1], o: sh(q.slice(1)) }));
+        qi = 0;
+        ok = 0;
+        streak = 0;
+        best = 0;
+        lives = 3;
+        RS = [];
+        warm();
+      }
+      function ask() {
+        const x = qs[qi];
+        TO = false;
+        if (qi == 0) {
+          T0 = Date.now();
+          clearInterval(TI);
+          TI = setInterval(tick, 500);
+        }
+        $("#mod").innerHTML =
+          `<button class="back" onclick="openMod(cur)">← Repasar teoría</button>${hud()}<div class="card q"><h3 style="margin-top:0">${x.q}</h3><div class="jw"><button class="jk" id="jk" onclick="joker()"${jk < 1 ? " disabled" : ""}>🃏 Comodín 50/50 · tenés ${jk}</button></div>${x.o.map((o, k) => `<button class="opt" onclick="pick(this,${k})">${o}</button>`).join("")}<div id="fb"></div></div>`;
+      }
+      function pick(b, k) {
+        clearTimeout(QT);
+        const jb = $("#jk");
+        if (jb) jb.disabled = true;
+        const x = qs[qi],
+          good = x.o[k] == x.a;
+        document.querySelectorAll(".opt").forEach((e) => {
+          e.disabled = true;
+          if (e.textContent == x.a) e.classList.add("ok");
+        });
+        if (good) hit(b);
+        else miss(b);
+        $("#fb").innerHTML =
+          `<p class="msg">${good ? F[Math.floor(Math.random() * F.length)] : TO ? "⏰ ¡Se acabó el tiempo! La correcta quedó en verde." : "Upe, esa no era. La correcta quedó en verde."}</p><button class="big" onclick="nxt()">${lives > 0 && ok < NEED() && qi + 1 < qs.length ? "Siguiente" : "Ver resultado"}</button>`;
+      }
+      function nxt() {
+        if (lives > 0 && ok < NEED() && ++qi < qs.length) return ask();
+        const fin = cur == M.length - 1,
+          need = NEED(),
+          pass = lives > 0 && ok >= need;
+        clearInterval(TI);
+        const el = Date.now() - T0;
+        if (pass && cur == done) {
+          done++;
+          pts += ok * 10 + best * 5 + lives * 5;
+          save();
+        }
+        $("#mod").innerHTML =
+          `<div class="card res"><span class="em">${pass ? (fin ? "🏆" : "🎉") : lives < 1 ? "😴" : "🥲"}</span><h2>${pass ? (fin ? "¡Sos maestro de la madurez del testing!" : "¡Módulo superado!") : lives < 1 ? "¡Las ranas se durmieron!" : "Casi, mae"}</h2>
+<p>${EN[cur][0]} ${EN[cur][1]}: ${pass ? "derrotado" : "sigue en pie"}. ⏱️ Tiempo total: <b>${fmt(el)}</b>. Aciertos: ${ok} (necesitabas ${need}). Mejor racha: 🔥${best}. Ranas que quedaron: ${"🐸".repeat(Math.max(0, lives)) || "ninguna"}.</p>${pass && cur == done - 1 && !fin ? `<p>Se abrió el módulo ${cur + 2}: ${M[cur + 1].n} ${M[cur + 1].e}</p>` : ""}${pass && fin ? "<p>Completaste toda la Ruta Pura Vida. ¡Pura vida y a probar con calidad! ☕🇨🇷</p>" : ""}
+${pass ? "" : `<button class="big" onclick="quiz()">Intentar de nuevo</button><button class="big" style="background:var(--blu)" onclick="openMod(cur)">Repasar teoría</button>`}
+${pass && !fin ? `<button class="big" style="background:var(--blu)" onclick="openMod(${cur + 1})">Siguiente módulo: ${M[cur + 1].n} ${M[cur + 1].e} ➜</button>` : ""}<button class="big" style="background:var(--grn)" onclick="home()">Volver al mapa</button></div>`;
+        if (pass) conf(fin ? 70 : 25);
+        window.scrollTo(0, 0);
+      }
+      function conf(n) {
+        for (let i = 0; i < n; i++) {
+          const s = document.createElement("span");
+          s.className = "cf";
+          s.textContent = ["🎉", "☕", "🌺", "🦜", "✨"][i % 5];
+          s.style.cssText = `left:${Math.random() * 100}vw;animation-duration:${2 + Math.random() * 3}s;animation-delay:${Math.random()}s`;
+          document.body.append(s);
+          setTimeout(() => s.remove(), 6500);
+        }
+      }
+      let ci = 0;
+      $("h1").innerHTML = $("h1")
+        .textContent.split(" ")
+        .map(
+          (w) =>
+            `<span class="wd">${[...w].map((c) => `<span style="animation-delay:${ci++ * 70}ms">${c}</span>`).join("")}</span>`,
+        )
+        .join(" ");
+      $(".tr").textContent = "🌴 🐒 🦜 🐢 🥭 ☕ 🌺 🐸 🦥 🌋 🚌 🏖️ ".repeat(12);
+      $("#mp").textContent = "🗺️ Volver al mapa";
+      function ayuda(s) {
+        $("#ay").style.display = s ? "flex" : "none";
+      }
+      document.addEventListener("keydown", (e) => {
+        if (e.key == "Escape") ayuda(0);
+      });
+      ayuda(1);
+      function reset() {
+        const b = $("footer button");
+        if (!b.dataset.s) {
+          b.dataset.s = 1;
+          b.textContent = "¿Seguro? Tocá otra vez para borrar todo";
+          setTimeout(() => {
+            delete b.dataset.s;
+            b.textContent = "Reiniciar aventura";
+          }, 3500);
+          return;
+        }
+        delete b.dataset.s;
+        b.textContent = "Reiniciar aventura";
+        done = 0;
+        pts = 0;
+        jk = 0;
+        save();
+        home();
+        toast("Aventura reiniciada. ¡A empezar de nuevo, mae!");
+      }
+      const EN = [
+        ["🐛", "Bicho Chichón"],
+        ["🦂", "Escorpión del Caos"],
+        ["🐍", "Terciopelo de los Defectos"],
+        ["🦟", "Zancudo del Retrabajo"],
+        ["🐊", "Cocodrilo del Tárcoles"],
+        ["🕷️", "Araña de los Requisitos"],
+        ["🦇", "Murciélago Sin Pruebas"],
+        ["🐉", "Dragón del Irazú"],
+        ["👹", "La Carreta Sin Bueyes (jefe final)"],
+      ];
+      const TA = [
+        "¡Jajaja, qué torta!",
+        "¡Diay, mae, ni cerca!",
+        "¡Casi, casi… pero no!",
+        "¡Eso ni en sueños!",
+      ];
+      const TQ = [
+        "¿Seguro que sabés esto, mae?",
+        "¡Hoy no pasás de aquí!",
+        "Tic, tac… se acaba el tiempo",
+        "Esta te la sé yo, vos no",
+        "¡Dale, impresioname!",
+        "Mi bicho interior dice que fallás",
+      ];
+      let lives = 3,
+        streak = 0,
+        best = 0,
+        W,
+        SP,
+        BN = 0,
+        QT,
+        TO = false,
+        RS = [];
+      let T0 = 0,
+        TI;
+      const JP = 50;
+      const fmt = (ms) => {
+        const s = Math.floor(ms / 1000);
+        return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+      };
+      const tick = () => {
+        const e = $("#clk");
+        if (e) e.textContent = "⏱️ " + fmt(Date.now() - T0);
+      };
+      const NEED = () => (cur == M.length - 1 ? 7 : 4);
+      const lvs = () =>
+        Array.from(
+          { length: 5 },
+          (_, i) => `<i class="${i < lives ? "" : "off"}">🐸</i>`,
+        ).join("");
+      function hud() {
+        const e = EN[cur],
+          hp = Math.max(0, 100 - (ok / NEED()) * 100);
+        return `<div class="hud"><span id="lv">${lvs()}</span><span class="cb" id="cb">${streak > 1 ? "🔥 x" + streak : ""}</span><span>${qi + 1}/${qs.length} · <b id="clk">⏱️ ${fmt(Date.now() - T0)}</b></span></div><div class="dots">${qs.map((_, i) => `<b class="${RS[i] == null ? "" : RS[i] ? "g" : "r"}"></b>`).join("")}</div><div class="fo"><span class="fe" id="fe">${e[0]}</span><div><b>${e[1]}</b><br>Derrotalo con ${NEED()} aciertos antes de perder las ranas<div class="bar hp"><i style="width:${hp}%"></i></div><div class="sb">💬 ${TQ[(Math.random() * TQ.length) | 0]}</div></div></div>`;
+      }
+      function upd() {
+        $("#lv").innerHTML = lvs();
+        $("#cb").textContent = streak > 1 ? "🔥 x" + streak : "";
+      }
+      function fx(c) {
+        const e = $("#fe");
+        e.classList.remove("hurt", "atk");
+        void e.offsetWidth;
+        e.classList.add(c);
+        setTimeout(() => e.classList.remove(c), 520);
+      }
+      function pop(t, b) {
+        const r = b.getBoundingClientRect(),
+          s = document.createElement("span");
+        s.className = "fl";
+        s.textContent = t;
+        s.style.cssText = `left:${r.left + r.width / 2 - 30}px;top:${r.top}px`;
+        document.body.append(s);
+        setTimeout(() => s.remove(), 1000);
+      }
+      function hit(b) {
+        RS[qi] = 1;
+        $(".dots b:nth-child(" + (qi + 1) + ")").className = "g";
+        ok++;
+        streak++;
+        best = Math.max(best, streak);
+        b.classList.add("ok");
+        $(".hp i").style.width = Math.max(0, 100 - (ok / NEED()) * 100) + "%";
+        fx("hurt");
+        pop("💥 ¡Golpe!", b);
+        if (streak > 1) conf(8);
+        if (streak % 3 == 0 && lives < 5) {
+          lives++;
+          toast("🔥 ¡Racha de " + streak + "! Ganaste una rana 🐸");
+        }
+        if (ok >= NEED()) {
+          $("#fe").textContent = "💀";
+          toast("¡Derrotaste a " + EN[cur][1] + "!");
+        }
+        upd();
+      }
+      function miss(b) {
+        RS[qi] = 0;
+        $(".dots b:nth-child(" + (qi + 1) + ")").className = "r";
+        b.classList.add("bad");
+        streak = 0;
+        lives--;
+        fx("atk");
+        const w = $(".wrap");
+        w.classList.add("quake");
+        setTimeout(() => w.classList.remove("quake"), 420);
+        pop("💔 -1", b);
+        toast(EN[cur][0] + " " + TA[(Math.random() * TA.length) | 0]);
+        upd();
+      }
+      function buy() {
+        if (jk >= 3) {
+          toast("Ya llevás el máximo de 3 comodines");
+          return;
+        }
+        if (pts < JP) {
+          toast(
+            "Te faltan " +
+              (JP - pts) +
+              " ☕ para el comodín. ¡Seguí jugando, mae!",
+          );
+          return;
+        }
+        pts -= JP;
+        jk++;
+        save();
+        home();
+        toast("🃏 ¡Comodín comprado! Ahora tenés " + jk);
+      }
+      function joker() {
+        if (jk < 1) return;
+        const x = qs[qi],
+          ws = [...document.querySelectorAll(".opt")].filter(
+            (e) => !e.disabled && e.textContent != x.a,
+          );
+        if (ws.length < 3) return;
+        jk--;
+        save();
+        sh(ws)
+          .slice(0, 2)
+          .forEach((e) => {
+            e.disabled = true;
+            e.classList.add("gone");
+          });
+        const j = $("#jk");
+        j.disabled = true;
+        j.textContent = "🃏 Comodín usado";
+        toast("🃏 ¡Quitamos 2 opciones incorrectas!");
+      }
+      function late() {
+        const x = qs[qi],
+          w = [...document.querySelectorAll(".opt")].find(
+            (e) => !e.disabled && e.textContent != x.a,
+          );
+        if (w) {
+          TO = true;
+          pick(w, -1);
+        }
+      }
+      function warm() {
+        BN = 0;
+        let t = 8;
+        $("#mod").innerHTML =
+          `<div class="card res"><h2>🐛 ¡Cacería de bichos!</h2><p>Estos son defectos sueltos. ¡Aplastá todos los que podás! Cada 4 bichos te dan 1 rana extra 🐸 (máximo 5).</p><p>⏱️ <b id="tm">${t}</b> s · 🪲 <b id="bn">0</b></p><div id="arena"></div><button class="back" onclick="endW()">Saltar calentamiento</button></div>`;
+        const ar = $("#arena");
+        SP = setInterval(() => {
+          const b = document.createElement("button");
+          b.className = "bug";
+          b.textContent = ["🐛", "🪲", "🦗", "🐜", "🐞"][
+            (Math.random() * 5) | 0
+          ];
+          b.style.cssText = `left:${Math.random() * 85}%;top:${Math.random() * 78}%;animation-duration:${0.7 + Math.random()}s`;
+          b.onclick = () => {
+            BN++;
+            $("#bn").textContent = BN;
+            b.textContent = "💥";
+            b.disabled = true;
+            setTimeout(() => b.remove(), 250);
+          };
+          ar.append(b);
+          setTimeout(() => b.remove(), 2000);
+        }, 480);
+        W = setInterval(() => {
+          t--;
+          $("#tm").textContent = t;
+          if (t <= 0) endW();
+        }, 1000);
+        window.scrollTo(0, 0);
+      }
+      function endW() {
+        clearInterval(W);
+        clearInterval(SP);
+        lives = Math.min(5, 3 + (BN >> 2));
+        toast(
+          BN
+            ? "🐛 Aplastaste " + BN + ": empezás con " + lives + " ranas 🐸"
+            : "Empezás con 3 ranas 🐸",
+        );
+        ask();
+      }
+      home();
+    </script>
+  </body>
+</html>
